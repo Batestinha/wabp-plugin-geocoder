@@ -13,8 +13,9 @@ import type { GeocoderProvider } from './provider';
 
 const NOMINATIM_RESPONSE_MAX_BYTES = 1_048_576;
 const NOMINATIM_REQUEST_TIMEOUT_MS = 7_000;
+const OSM_ATTRIBUTION_TEXT = 'Data © OpenStreetMap contributors, ODbL 1.0';
 const OSM_ATTRIBUTION: GeocoderAttribution = {
-  text: 'Data © OpenStreetMap contributors, ODbL 1.0',
+  text: OSM_ATTRIBUTION_TEXT,
   url: 'https://www.openstreetmap.org/copyright'
 };
 
