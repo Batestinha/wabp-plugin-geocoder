@@ -19,6 +19,21 @@ export const geocoderManifest: PluginManifest = {
   descriptionKey: 'official.geocoder.description',
   defaultMessages: geocoderMessages,
   commands: [],
+  help: {
+    featureId: 'geocoding',
+    titleKey: 'official.geocoder.help.feature.title',
+    summaryKey: 'official.geocoder.help.feature.summary',
+    order: 100,
+    aliases: ['maps', 'location lookup'],
+    topics: [{
+      topicId: 'location-lookup',
+      titleKey: 'official.geocoder.help.lookup.title',
+      summaryKey: 'official.geocoder.help.lookup.summary',
+      instructionKeys: ['official.geocoder.help.lookup.instruction'],
+      keywords: ['place', 'address', 'coordinates', 'map'],
+      availability: { invocation: 'either', permission: 'plugin.configure' }
+    }]
+  },
   eventSubscriptions: [],
   services: [{
     serviceId: GEOCODER_SERVICE_ID,
