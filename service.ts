@@ -36,7 +36,7 @@ export function registerGeocoderServices(context: PluginServiceRegistrationConte
         outputSchema: geocodeOutputSchema,
         timeoutMs: 10_000,
         async handler(rawInput, call): Promise<GeocodeOutput> {
-          const config = parseGeocoderConfig(await context.configFor(call.scopeId, call.actorWid));
+          const config = parseGeocoderConfig(await context.configFor(call.scopeId, call.actorIdentityId));
           const input = effectiveGeocodeInput(rawInput as GeocodeInput, config);
           const provider = providerFor(config);
           const cacheKey = responseCacheKey(call.scopeId, config, GEOCODER_GEOCODE_METHOD, input);
@@ -70,7 +70,7 @@ export function registerGeocoderServices(context: PluginServiceRegistrationConte
         outputSchema: reverseGeocodeOutputSchema,
         timeoutMs: 10_000,
         async handler(rawInput, call): Promise<ReverseGeocodeOutput> {
-          const config = parseGeocoderConfig(await context.configFor(call.scopeId, call.actorWid));
+          const config = parseGeocoderConfig(await context.configFor(call.scopeId, call.actorIdentityId));
           const input = effectiveReverseGeocodeInput(rawInput as ReverseGeocodeInput, config);
           const provider = providerFor(config);
           const cacheKey = responseCacheKey(call.scopeId, config, GEOCODER_REVERSE_GEOCODE_METHOD, input);
