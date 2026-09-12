@@ -1,0 +1,42 @@
+name: Validate plugin
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        node: ['22.23.2', '24.15.0']
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm test
+      - name: Build and verify archive reproduction
+        run: |
+          npm run release:archive
+          sha256sum .cache/official.geocoder-*.tgz > "$RUNNER_TEMP/plugin.sha256"
+          npm run release:archive
+          sha256sum --check "$RUNNER_TEMP/plugin.sha256"
+      - name: Load packaged code without repository dependencies
+        run: |
+          mkdir "$RUNNER_TEMP/plugin-isolation"
+          tar -xzf .cache/official.geocoder-*.tgz -C "$RUNNER_TEMP/plugin-isolation"
+          cd "$RUNNER_TEMP/plugin-isolation"
+          node - <<'JS'
+          const assert = require('node:assert/strict');
+          const { timezoneForPoint } = require('./package/dist/timezone');
+          assert.equal(timezoneForPoint({latitude: 38.7223, longitude: -9.1393}).timezone, 'Europe/Lisbon');
+          assert.equal(timezoneForPoint({latitude: 37.7412, longitude: -25.6756}).timezone, 'Atlantic/Azores');
+          JS
