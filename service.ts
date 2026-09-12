@@ -1,3 +1,4 @@
+import { timezoneForPoint, withPlaceTimezone } from './timezone';
 import { createHash } from 'node:crypto';
 import type { z } from 'zod';
 import type { PluginServiceRegistration } from '../../../platform/pluginRuntime/pluginServices';
@@ -11,6 +12,10 @@ import {
   GEOCODER_MAP_LINKS_METHOD,
   GEOCODER_REVERSE_GEOCODE_METHOD,
   GEOCODER_SERVICE_ID,
+  GEOCODER_TIMEZONE_METHOD,
+  geocoderPointSchema,
+  geocoderTimezoneOutputSchema,
+  type GeocoderPoint,
   type GeocodeInput,
   type GeocodeOutput,
   type MapLinksInput,
@@ -28,7 +33,11 @@ import {
 export function registerGeocoderServices(context: PluginServiceRegistrationContext): PluginServiceRegistration[] {
   return [{
     serviceId: GEOCODER_SERVICE_ID,
-    methods: [
+    methods: [{
+      name: GEOCODER_TIMEZONE_METHOD, access: 'read',
+      inputSchema: geocoderPointSchema, outputSchema: geocoderTimezoneOutputSchema,
+      handler: (input) => timezoneForPoint(input as GeocoderPoint)
+    },
       {
         name: GEOCODER_GEOCODE_METHOD,
         access: 'read',
@@ -42,14 +51,14 @@ export function registerGeocoderServices(context: PluginServiceRegistrationConte
           const cacheKey = responseCacheKey(call.scopeId, config, GEOCODER_GEOCODE_METHOD, input);
           const cached = await readCached(context.ephemeralStore, cacheKey, geocodeOutputSchema);
           if (cached) {
-            return cached;
+            return { ...cached, results: cached.results.map(withPlaceTimezone) };
           }
           await waitForProviderSlot(context.ephemeralStore, providerRateKey(config), config, call.signal);
           const filledWhileWaiting = await readCached(context.ephemeralStore, cacheKey, geocodeOutputSchema);
           if (filledWhileWaiting) {
-            return filledWhileWaiting;
+            return { ...filledWhileWaiting, results: filledWhileWaiting.results.map(withPlaceTimezone) };
           }
-          const results = await provider.geocode(input, call.signal);
+          const results = (await provider.geocode(input, call.signal)).map(withPlaceTimezone);
           const output = geocodeOutputSchema.parse({
             provider: provider.providerId,
             fetchedAt: new Date().toISOString(),
@@ -76,7 +85,7 @@ export function registerGeocoderServices(context: PluginServiceRegistrationConte
           const cacheKey = responseCacheKey(call.scopeId, config, GEOCODER_REVERSE_GEOCODE_METHOD, input);
           const cached = await readCached(context.ephemeralStore, cacheKey, reverseGeocodeOutputSchema);
           if (cached) {
-            return cached;
+            return { ...cached, place: cached.place ? withPlaceTimezone(cached.place) : null };
           }
           await waitForProviderSlot(context.ephemeralStore, providerRateKey(config), config, call.signal);
           const filledWhileWaiting = await readCached(
@@ -85,13 +94,13 @@ export function registerGeocoderServices(context: PluginServiceRegistrationConte
             reverseGeocodeOutputSchema
           );
           if (filledWhileWaiting) {
-            return filledWhileWaiting;
+            return { ...filledWhileWaiting, place: filledWhileWaiting.place ? withPlaceTimezone(filledWhileWaiting.place) : null };
           }
           const place = await provider.reverseGeocode(input, call.signal);
           const output = reverseGeocodeOutputSchema.parse({
             provider: provider.providerId,
             fetchedAt: new Date().toISOString(),
-            place
+            place: place ? withPlaceTimezone(place) : null
           });
           await context.ephemeralStore.set(
             cacheKey,

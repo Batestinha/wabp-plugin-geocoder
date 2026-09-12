@@ -1,13 +1,20 @@
+import { scopeTimezoneSchema } from '../../../platform/governance/scopes/scopeClock';
 import { z } from 'zod';
 
 export const GEOCODER_SERVICE_ID = 'official.geocoder.v1';
 export const GEOCODER_GEOCODE_METHOD = 'geocode';
 export const GEOCODER_REVERSE_GEOCODE_METHOD = 'reverseGeocode';
 export const GEOCODER_MAP_LINKS_METHOD = 'mapLinks';
+export const GEOCODER_TIMEZONE_METHOD = 'timezoneForPoint';
 
 export const geocoderPointSchema = z.object({
   latitude: z.number().finite().min(-90).max(90),
   longitude: z.number().finite().min(-180).max(180)
+}).strict();
+
+export const geocoderTimezoneOutputSchema = z.object({
+  timezone: scopeTimezoneSchema.nullable(),
+  candidates: z.array(scopeTimezoneSchema)
 }).strict();
 
 export const geocoderBoundingBoxSchema = z.object({
@@ -54,6 +61,7 @@ export const geocoderPlaceSchema = z.object({
   label: z.string().trim().min(1).max(2048),
   name: z.string().trim().min(1).max(512).optional(),
   point: geocoderPointSchema,
+  timezone: scopeTimezoneSchema.optional(),
   address: geocoderAddressSchema,
   boundingBox: geocoderBoundingBoxSchema.optional(),
   category: z.string().trim().min(1).max(128).optional(),
