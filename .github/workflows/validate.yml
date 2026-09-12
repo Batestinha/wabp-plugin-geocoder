@@ -40,3 +40,11 @@ jobs:
           assert.equal(timezoneForPoint({latitude: 38.7223, longitude: -9.1393}).timezone, 'Europe/Lisbon');
           assert.equal(timezoneForPoint({latitude: 37.7412, longitude: -25.6756}).timezone, 'Atlantic/Azores');
           JS
+      - name: Retain exact validated archive
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: geocoder-node-${{ matrix.node }}
+          path: .cache/official.geocoder-*.tgz
+          include-hidden-files: true
+          retention-days: 7
+          if-no-files-found: error

@@ -59,9 +59,12 @@ def build_release():
             if required not in files:
                 raise ValueError('Missing runtime file: ' + required)
         # The comprehensive dataset remains byte-for-byte identical to the locked npm input.
+        input_files = {name: hashlib.sha256(data).hexdigest() for name, data in files.items()}
+        input_files.update(omitted)
+        input_tree = json.dumps(input_files, sort_keys=True, separators=(',', ':')).encode()
         files['package/packaging.json'] = (json.dumps({
             'schemaVersion': 1,
-            'upstreamNpmArchiveSha256': hashlib.sha256(packed.read_bytes()).hexdigest(),
+            'inputTreeSha256': hashlib.sha256(input_tree).hexdigest(),
             'omittedUnusedFiles': omitted,
             'retainedComprehensiveData': {
                 name: hashlib.sha256(data).hexdigest() for name, data in files.items()
