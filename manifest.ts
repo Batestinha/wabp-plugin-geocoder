@@ -1,4 +1,4 @@
-import type { PluginManifest } from '../../../platform/pluginRuntime/manifest';
+import type { PluginManifest } from '../../../../packages/plugin-sdk/src/manifest';
 import { geocoderConfigSchema } from './config';
 import { geocoderMessages } from './messages';
 import {

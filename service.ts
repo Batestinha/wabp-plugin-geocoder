@@ -1,9 +1,9 @@
 import { timezoneForPoint, withPlaceTimezone } from './timezone';
 import { createHash } from 'node:crypto';
 import type { z } from 'zod';
-import type { PluginServiceRegistration } from '../../../platform/pluginRuntime/pluginServices';
-import type { PluginEphemeralStore } from '../../../platform/pluginRuntime/runtime/pluginEphemeralStore';
-import type { PluginServiceRegistrationContext } from '../../../platform/pluginRuntime/types';
+import type { PluginServiceRegistration } from '../../../../packages/plugin-sdk/src/services';
+import type { PluginEphemeralStore } from '../../../../packages/plugin-sdk/src/ephemeral-store';
+import type { ServicePluginContext } from '../../../../packages/plugin-sdk/src/service-plugin';
 import { parseGeocoderConfig, type GeocoderConfig } from './config';
 import { NominatimGeocoderProvider } from './providers/nominatim';
 import type { GeocoderProvider } from './providers/provider';
@@ -30,7 +30,7 @@ import {
   reverseGeocodeOutputSchema
 } from './serviceApi';
 
-export function registerGeocoderServices(context: PluginServiceRegistrationContext): PluginServiceRegistration[] {
+export function registerGeocoderServices(context: ServicePluginContext): PluginServiceRegistration[] {
   return [{
     serviceId: GEOCODER_SERVICE_ID,
     methods: [{

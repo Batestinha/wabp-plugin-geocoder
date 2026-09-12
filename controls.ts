@@ -1,9 +1,9 @@
-import { defineControl } from '../../../platform/operatorConsole/controlCatalog/define';
+import { defineControl } from '../../../../packages/plugin-sdk/src/controls';
 import type {
   ControlDescriptor,
   ControlSchemaMetadata,
   ControlUiHint
-} from '../../../platform/operatorConsole/controlCatalog/types';
+} from '../../../../packages/plugin-sdk/src/controls-types';
 import { GEOCODER_PLUGIN_ID } from './manifest';
 
 const PROVIDER_OPTIONS = [{ value: 'nominatim', label: 'Nominatim' }];
