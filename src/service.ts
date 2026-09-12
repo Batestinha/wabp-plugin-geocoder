@@ -1,9 +1,9 @@
 import { timezoneForPoint, withPlaceTimezone } from './timezone';
 import { createHash } from 'node:crypto';
 import type { z } from 'zod';
-import type { PluginServiceRegistration } from '../../../../packages/plugin-sdk/src/services';
-import type { PluginEphemeralStore } from '../../../../packages/plugin-sdk/src/ephemeral-store';
-import type { ServicePluginContext } from '../../../../packages/plugin-sdk/src/service-plugin';
+import type { PluginServiceRegistration } from '@wabs/plugin-sdk/services';
+import type { PluginEphemeralStore } from '@wabs/plugin-sdk/ephemeral-store';
+import type { ServicePluginContext } from '@wabs/plugin-sdk/service-plugin';
 import { parseGeocoderConfig, type GeocoderConfig } from './config';
 import { NominatimGeocoderProvider } from './providers/nominatim';
 import type { GeocoderProvider } from './providers/provider';

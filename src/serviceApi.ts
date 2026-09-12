@@ -1,4 +1,4 @@
-import { scopeTimezoneSchema } from '../../../../packages/plugin-sdk/src/clock';
+import { scopeTimezoneSchema } from '@wabs/plugin-sdk/clock';
 import { z } from 'zod';
 
 export const GEOCODER_SERVICE_ID = 'official.geocoder.v1';

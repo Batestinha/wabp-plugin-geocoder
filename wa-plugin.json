@@ -1,0 +1,313 @@
+{
+  "schemaVersion": 1,
+  "pluginId": "official.geocoder",
+  "name": "Geocoder",
+  "description": "Provider-neutral geocoding and map-link services for other plugins.",
+  "kind": "managed_group",
+  "version": "0.2.0",
+  "coreApiRange": "^0.3.0",
+  "entrypoint": "dist/index.js",
+  "messageNamespace": "official.geocoder",
+  "descriptionKey": "official.geocoder.description",
+  "commands": [],
+  "help": {
+    "featureId": "geocoding",
+    "titleKey": "official.geocoder.help.feature.title",
+    "summaryKey": "official.geocoder.help.feature.summary",
+    "order": 100,
+    "aliases": [
+      "maps",
+      "location lookup"
+    ],
+    "topics": [
+      {
+        "topicId": "location-lookup",
+        "titleKey": "official.geocoder.help.lookup.title",
+        "summaryKey": "official.geocoder.help.lookup.summary",
+        "instructionKeys": [
+          "official.geocoder.help.lookup.instruction"
+        ],
+        "keywords": [
+          "place",
+          "address",
+          "coordinates",
+          "map"
+        ],
+        "availability": {
+          "invocation": "either",
+          "permission": "plugin.configure"
+        }
+      }
+    ]
+  },
+  "eventSubscriptions": [],
+  "services": [
+    {
+      "serviceId": "official.geocoder.v1",
+      "description": "Provider-neutral forward geocoding, reverse geocoding, and map links.",
+      "methods": [
+        {
+          "name": "timezoneForPoint",
+          "access": "read"
+        },
+        {
+          "name": "geocode",
+          "access": "read",
+          "timeoutMs": 10000
+        },
+        {
+          "name": "reverseGeocode",
+          "access": "read",
+          "timeoutMs": 10000
+        },
+        {
+          "name": "mapLinks",
+          "access": "read"
+        }
+      ]
+    }
+  ],
+  "requiredPermissions": [],
+  "requiredBotCapabilities": [],
+  "dangerousActions": [],
+  "backgroundJobs": [],
+  "cancellation": {
+    "workflows": []
+  },
+  "dependencies": [],
+  "operatorConsole": {
+    "configPaths": [
+      "provider",
+      "defaultLanguage",
+      "defaultCountryCodes",
+      "cache.successTtlSeconds",
+      "cache.reverseTtlSeconds",
+      "cache.notFoundTtlSeconds",
+      "rateLimit.minimumIntervalMs",
+      "providerSettings.nominatim.baseUrl",
+      "providerSettings.nominatim.userAgent",
+      "providerSettings.nominatim.contactEmail"
+    ],
+    "controls": [
+      {
+        "id": "plugin.official.geocoder.provider",
+        "path": "provider",
+        "label": "Provider",
+        "description": "Geocoding provider used by plugin service calls.",
+        "section": "Geocoder",
+        "order": 10,
+        "schema": {
+          "type": "enum",
+          "enum": [
+            {
+              "value": "nominatim",
+              "label": "Nominatim"
+            }
+          ]
+        },
+        "ui": {
+          "helpText": "Geocoding provider used by plugin service calls.",
+          "widget": "segmented",
+          "options": [
+            {
+              "value": "nominatim",
+              "label": "Nominatim"
+            }
+          ]
+        },
+        "relatedCommandIds": [],
+        "relatedActionIds": []
+      },
+      {
+        "id": "plugin.official.geocoder.defaultLanguage",
+        "path": "defaultLanguage",
+        "label": "Default language",
+        "description": "BCP 47 language tag used when a service caller does not provide one.",
+        "section": "Geocoder defaults",
+        "order": 20,
+        "schema": {
+          "type": "string",
+          "min": 2,
+          "max": 35,
+          "required": true
+        },
+        "ui": {
+          "helpText": "BCP 47 language tag used when a service caller does not provide one.",
+          "widget": "text",
+          "placeholder": "pt-PT"
+        },
+        "relatedCommandIds": [],
+        "relatedActionIds": []
+      },
+      {
+        "id": "plugin.official.geocoder.defaultCountryCodes",
+        "path": "defaultCountryCodes",
+        "label": "Default countries",
+        "description": "Optional ISO alpha-2 country filters used when a service caller does not provide country codes.",
+        "section": "Geocoder defaults",
+        "order": 30,
+        "schema": {
+          "type": "array",
+          "max": 10,
+          "items": {
+            "type": "string",
+            "min": 2,
+            "max": 2
+          }
+        },
+        "ui": {
+          "helpText": "Optional ISO alpha-2 country filters used when a service caller does not provide country codes.",
+          "widget": "tags",
+          "placeholder": "PT"
+        },
+        "relatedCommandIds": [],
+        "relatedActionIds": []
+      },
+      {
+        "id": "plugin.official.geocoder.cache.successTtlSeconds",
+        "path": "cache.successTtlSeconds",
+        "label": "Search cache TTL",
+        "description": "Seconds to cache successful forward-geocoding responses.",
+        "section": "Geocoder cache",
+        "order": 100,
+        "schema": {
+          "type": "number",
+          "unit": "seconds",
+          "min": 60,
+          "max": 604800
+        },
+        "ui": {
+          "helpText": "Seconds to cache successful forward-geocoding responses.",
+          "widget": "duration"
+        },
+        "relatedCommandIds": [],
+        "relatedActionIds": []
+      },
+      {
+        "id": "plugin.official.geocoder.cache.reverseTtlSeconds",
+        "path": "cache.reverseTtlSeconds",
+        "label": "Reverse cache TTL",
+        "description": "Seconds to cache successful reverse-geocoding responses.",
+        "section": "Geocoder cache",
+        "order": 110,
+        "schema": {
+          "type": "number",
+          "unit": "seconds",
+          "min": 60,
+          "max": 2592000
+        },
+        "ui": {
+          "helpText": "Seconds to cache successful reverse-geocoding responses.",
+          "widget": "duration"
+        },
+        "relatedCommandIds": [],
+        "relatedActionIds": []
+      },
+      {
+        "id": "plugin.official.geocoder.cache.notFoundTtlSeconds",
+        "path": "cache.notFoundTtlSeconds",
+        "label": "Not-found cache TTL",
+        "description": "Seconds to cache searches or reverse lookups that return no place.",
+        "section": "Geocoder cache",
+        "order": 120,
+        "schema": {
+          "type": "number",
+          "unit": "seconds",
+          "min": 30,
+          "max": 86400
+        },
+        "ui": {
+          "helpText": "Seconds to cache searches or reverse lookups that return no place.",
+          "widget": "duration"
+        },
+        "relatedCommandIds": [],
+        "relatedActionIds": []
+      },
+      {
+        "id": "plugin.official.geocoder.rateLimit.minimumIntervalMs",
+        "path": "rateLimit.minimumIntervalMs",
+        "label": "Minimum request interval",
+        "description": "Minimum milliseconds between requests to the configured provider endpoint across runtime processes.",
+        "section": "Geocoder provider",
+        "order": 200,
+        "schema": {
+          "type": "number",
+          "unit": "milliseconds",
+          "min": 0,
+          "max": 60000
+        },
+        "ui": {
+          "helpText": "Minimum milliseconds between requests to the configured provider endpoint across runtime processes.",
+          "widget": "duration"
+        },
+        "relatedCommandIds": [],
+        "relatedActionIds": []
+      },
+      {
+        "id": "plugin.official.geocoder.providerSettings.nominatim.baseUrl",
+        "path": "providerSettings.nominatim.baseUrl",
+        "label": "Nominatim endpoint",
+        "description": "Base URL of the Nominatim-compatible geocoding service.",
+        "section": "Geocoder provider",
+        "order": 210,
+        "schema": {
+          "type": "string",
+          "format": "url",
+          "required": true
+        },
+        "ui": {
+          "helpText": "Base URL of the Nominatim-compatible geocoding service.",
+          "widget": "url",
+          "placeholder": "https://nominatim.openstreetmap.org"
+        },
+        "relatedCommandIds": [],
+        "relatedActionIds": []
+      },
+      {
+        "id": "plugin.official.geocoder.providerSettings.nominatim.userAgent",
+        "path": "providerSettings.nominatim.userAgent",
+        "label": "Provider user agent",
+        "description": "Identifying User-Agent sent with Nominatim requests.",
+        "section": "Geocoder provider",
+        "order": 220,
+        "schema": {
+          "type": "string",
+          "min": 3,
+          "max": 512,
+          "required": true
+        },
+        "ui": {
+          "helpText": "Identifying User-Agent sent with Nominatim requests.",
+          "widget": "text",
+          "placeholder": "WhatsAppBotPlatform/0.1"
+        },
+        "relatedCommandIds": [],
+        "relatedActionIds": []
+      },
+      {
+        "id": "plugin.official.geocoder.providerSettings.nominatim.contactEmail",
+        "path": "providerSettings.nominatim.contactEmail",
+        "label": "Provider contact email",
+        "description": "Optional contact email sent to Nominatim for request identification.",
+        "section": "Geocoder provider",
+        "order": 230,
+        "schema": {
+          "type": "string",
+          "max": 320
+        },
+        "ui": {
+          "helpText": "Optional contact email sent to Nominatim for request identification.",
+          "widget": "text",
+          "placeholder": "operator@example.com"
+        },
+        "sensitivity": {
+          "sensitive": true,
+          "redact": "configured-state"
+        },
+        "relatedCommandIds": [],
+        "relatedActionIds": []
+      }
+    ],
+    "internalConfigPaths": []
+  }
+}

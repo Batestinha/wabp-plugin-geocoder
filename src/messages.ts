@@ -1,4 +1,4 @@
-import type { MessageCatalog } from '../../../../packages/plugin-sdk/src/i18n';
+import type { MessageCatalog } from '@wabs/plugin-sdk/i18n';
 
 export const geocoderMessages: MessageCatalog = {
   'official.geocoder.description': 'Provider-neutral geocoding and map-link services for other plugins.',

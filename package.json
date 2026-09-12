@@ -1,0 +1,44 @@
+{
+  "name": "@wabs/plugin-geocoder",
+  "version": "0.2.0",
+  "description": "Provider-neutral geocoding and map-link services for other plugins.",
+  "license": "MIT",
+  "private": true,
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "wa-plugin.json",
+    "locales",
+    "README.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
+    "provenance.json",
+    "package-lock.json"
+  ],
+  "bundledDependencies": [
+    "@wabs/plugin-sdk",
+    "geo-tz",
+    "zod"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test tests/*.test.cjs",
+    "prepack": "npm run build",
+    "release:archive": "python scripts/package-release.py"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@wabs/plugin-sdk": "file:vendor/wabs-plugin-sdk-0.3.0-ed859a147c58.tgz",
+    "geo-tz": "8.1.8",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.20",
+    "typescript": "5.9.3"
+  }
+}

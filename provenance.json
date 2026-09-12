@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "sourceRepository": "https://github.com/Batestinha/wabp",
+  "sourceCommit": "89eb49117333fead0f80244e5e03e10ccfbe96c9",
+  "sourceDirectory": "src/plugins/official/geocoder",
+  "sdk": {
+    "path": "vendor/wabs-plugin-sdk-0.3.0-ed859a147c58.tgz",
+    "sha256": "ed859a147c58c02a7d07d56ae4b3926236d997ab3b76bee4cc19abb4447226e4",
+    "sourceDirectory": "packages/plugin-sdk",
+    "sourceCommit": "a7c07bcf732af46a90d75869a208beed771b52f4"
+  },
+  "timezoneData": {
+    "package": "geo-tz",
+    "version": "8.1.8",
+    "entrypoint": "geo-tz/dist/find-all",
+    "license": "ODbL-1.0",
+    "upstream": "https://github.com/evansiroky/timezone-boundary-builder",
+    "modifications": [],
+    "packagingOmissions": [
+      "data/timezones-1970.geojson.geo.dat",
+      "data/timezones-1970.geojson.index.json",
+      "data/timezones-now.geojson.geo.dat",
+      "data/timezones-now.geojson.index.json"
+    ]
+  },
+  "extractedHistoryCommit": "9d39aa6cf1d22e6a15f3dd3f1e05b1b26faed919"
+}

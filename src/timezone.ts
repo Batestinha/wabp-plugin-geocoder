@@ -1,5 +1,5 @@
 import { find } from 'geo-tz/dist/find-all';
-import { canonicalTimezone } from '../../../../packages/plugin-sdk/src/clock';
+import { canonicalTimezone } from '@wabs/plugin-sdk/clock';
 import { geocoderPointSchema, type GeocoderPlace, type GeocoderPoint } from './serviceApi';
 
 /** Exact offline boundary lookup. Country names and language never imply a zone. */

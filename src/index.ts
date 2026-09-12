@@ -1,4 +1,4 @@
-import type { ServicePlugin } from '../../../../packages/plugin-sdk/src/service-plugin';
+import type { ServicePlugin } from '@wabs/plugin-sdk/service-plugin';
 import { geocoderManifest } from './manifest';
 import { registerGeocoderServices } from './service';
 

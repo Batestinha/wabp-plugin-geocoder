@@ -1,0 +1,8 @@
+{
+  "official.geocoder.description": "Servicos de geocodificacao e ligacoes de mapas, independentes do fornecedor, para outros plugins.",
+  "official.geocoder.help.feature.title": "Pesquisa de locais",
+  "official.geocoder.help.feature.summary": "Resolve nomes de lugares, moradas, coordenadas e ligações de mapa para funcionalidades ativas.",
+  "official.geocoder.help.lookup.title": "Serviço de geocodificação",
+  "official.geocoder.help.lookup.summary": "Fornece correspondência de locais a eventos, meteorologia e outros plugins do âmbito.",
+  "official.geocoder.help.lookup.instruction": "Este é um serviço de apoio sem comando direto na conversa; usa os tópicos de ajuda de eventos ou meteorologia que o consomem."
+}

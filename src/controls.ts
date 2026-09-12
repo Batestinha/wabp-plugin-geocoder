@@ -1,9 +1,9 @@
-import { defineControl } from '../../../../packages/plugin-sdk/src/controls';
+import { defineControl } from '@wabs/plugin-sdk/controls';
 import type {
   ControlDescriptor,
   ControlSchemaMetadata,
   ControlUiHint
-} from '../../../../packages/plugin-sdk/src/controls-types';
+} from '@wabs/plugin-sdk/controls-types';
 import { GEOCODER_PLUGIN_ID } from './manifest';
 
 const PROVIDER_OPTIONS = [{ value: 'nominatim', label: 'Nominatim' }];
