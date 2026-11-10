@@ -10,10 +10,20 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    # The canonical archive builder (the same image as release.yml): gzip bytes depend on the zlib
+    # implementation, so every build that can become a release uses this one (see RELEASING.md).
+    container:
+      image: docker.io/library/fedora:44@sha256:b189269dfee735c54ebcd3b4e43ff2dc0d4a4b07855468970217c9df57968eb0
     strategy:
       matrix:
         node: ['22.23.2', '24.15.0']
     steps:
+      - name: Install the canonical archive toolchain
+        run: |
+          set -Eeuo pipefail
+          dnf -y -q --setopt=install_weak_deps=False install python3 python-unversioned-command git-core tar gzip findutils
+          test "$(rpm -q zlib-ng-compat)" = zlib-ng-compat-2.3.3-3.fc44.x86_64
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           persist-credentials: false
@@ -24,13 +34,17 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm test
       - name: Build and verify archive reproduction
+        shell: bash
         run: |
+          set -Eeuo pipefail
           npm run release:archive
           sha256sum .cache/official.geocoder-*.tgz > "$RUNNER_TEMP/plugin.sha256"
           npm run release:archive
           sha256sum --check "$RUNNER_TEMP/plugin.sha256"
       - name: Load packaged code without repository dependencies
+        shell: bash
         run: |
+          set -Eeuo pipefail
           mkdir "$RUNNER_TEMP/plugin-isolation"
           tar -xzf .cache/official.geocoder-*.tgz -C "$RUNNER_TEMP/plugin-isolation"
           cd "$RUNNER_TEMP/plugin-isolation"
