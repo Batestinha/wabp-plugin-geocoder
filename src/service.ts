@@ -272,6 +272,7 @@ export async function resolvePlace(
     candidates,
     presentation: {
       optionLines: optionLines(candidates, t),
+      optionLabels: candidates.map((candidate) => optionLabel(candidate, t)),
       ...(decision.status === 'ambiguous' && others.length > 0
         ? { alternatives: t('official.geocoder.alternatives', { places: others.join(' · ') }) }
         : {})
@@ -279,12 +280,16 @@ export async function resolvePlace(
   });
 }
 
+function optionLabel(candidate: { place: GeocoderPlace; remembered: boolean }, t: TranslateFn): string {
+  return candidate.remembered
+    ? t('official.geocoder.option.remembered', { label: candidate.place.label })
+    : candidate.place.label;
+}
+
 function optionLines(candidates: Array<{ place: GeocoderPlace; remembered: boolean }>, t: TranslateFn): string[] {
   return candidates.map((candidate, index) => t('official.geocoder.option.line', {
     number: index + 1,
-    label: candidate.remembered
-      ? t('official.geocoder.option.remembered', { label: candidate.place.label })
-      : candidate.place.label
+    label: optionLabel(candidate, t)
   }));
 }
 

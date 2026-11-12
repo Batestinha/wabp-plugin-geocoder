@@ -129,6 +129,7 @@ test('a confirmed choice is remembered for those words, ranks first, and later l
   assert.equal(again.candidates[0].place.label, 'Sintra, Lisboa, Portugal');
   assert.equal(again.candidates[0].remembered, true);
   assert.equal(again.presentation.optionLines[0], '1. Sintra, Lisboa, Portugal (já usado)');
+  assert.equal(again.presentation.optionLabels[0], 'Sintra, Lisboa, Portugal (já usado)');
   assert.equal(again.candidates.length, 2);
   // Memory-only answers skip the provider.
   const before = h.providerQueries.length;

@@ -160,6 +160,8 @@ export const resolveOutputSchema = z.object({
   presentation: z.object({
     /** "1. Sintra, Lisboa, Portugal" lines for a numbered list. */
     optionLines: z.array(z.string()),
+    /** The same entries without numbers, for menus that number their own options. */
+    optionLabels: z.array(z.string()),
     /** One line naming the other places when status is ambiguous, for replies that use the best guess. */
     alternatives: z.string().optional()
   }).strict()
