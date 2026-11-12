@@ -2,7 +2,10 @@ import type { PluginManifest } from '@wabs/plugin-sdk/manifest';
 import { geocoderConfigSchema } from './config';
 import { geocoderMessages } from './messages';
 import {
+  GEOCODER_CHOOSE_METHOD,
   GEOCODER_GEOCODE_METHOD,
+  GEOCODER_REMEMBER_METHOD,
+  GEOCODER_RESOLVE_METHOD,
   GEOCODER_MAP_LINKS_METHOD,
   GEOCODER_REVERSE_GEOCODE_METHOD,
   GEOCODER_TIMEZONE_METHOD,
@@ -14,7 +17,7 @@ export const GEOCODER_PLUGIN_ID = 'official.geocoder';
 export const geocoderManifest: PluginManifest = {
   pluginId: GEOCODER_PLUGIN_ID,
   kind: 'managed_group',
-  version: '0.2.0',
+  version: '0.3.0',
   coreApiRange: '^0.3.0',
   messageNamespace: 'official.geocoder',
   descriptionKey: 'official.geocoder.description',
@@ -38,7 +41,7 @@ export const geocoderManifest: PluginManifest = {
   eventSubscriptions: [],
   services: [{
     serviceId: GEOCODER_SERVICE_ID,
-    description: 'Provider-neutral forward geocoding, reverse geocoding, and map links.',
+    description: 'Provider-neutral forward geocoding, reverse geocoding, map links, and place disambiguation with a per-scope memory of confirmed places.',
     methods: [{ name: GEOCODER_TIMEZONE_METHOD, access: 'read' },
       {
         name: GEOCODER_GEOCODE_METHOD,
@@ -53,6 +56,19 @@ export const geocoderManifest: PluginManifest = {
       {
         name: GEOCODER_MAP_LINKS_METHOD,
         access: 'read'
+      },
+      {
+        name: GEOCODER_RESOLVE_METHOD,
+        access: 'read',
+        timeoutMs: 10_000
+      },
+      {
+        name: GEOCODER_CHOOSE_METHOD,
+        access: 'read'
+      },
+      {
+        name: GEOCODER_REMEMBER_METHOD,
+        access: 'mutation'
       }
     ]
   }],

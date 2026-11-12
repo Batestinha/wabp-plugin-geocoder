@@ -1,6 +1,6 @@
 {
   "name": "@wabs/plugin-geocoder",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Provider-neutral geocoding and map-link services for other plugins.",
   "license": "MIT",
   "private": true,
