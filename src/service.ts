@@ -223,6 +223,9 @@ async function geocodeCached(
  * Remembered places for this exact text come first; the provider search is biased (not limited) to the
  * area of this scope's remembered places; candidates are ranked, de-duplicated and judged confident or not.
  */
+/** Ask the provider for its full page so local ranking has room; the caller still gets `limit`. */
+const PROVIDER_RESULTS = 10;
+
 export async function resolvePlace(
   context: ServicePluginContext,
   config: GeocoderConfig,
@@ -238,13 +241,14 @@ export async function resolvePlace(
   let fetchedAt = new Date().toISOString();
   let results: GeocoderPlace[] = [];
   if (!input.memoryOnly && searchQuery.length >= 2) {
+    // The usual area ranks results here instead of going to the provider as a viewbox: Nominatim's
+    // non-bounded viewbox can drop the right places altogether ("Lagos" near Lisbon returned only "Laos").
     const output = await geocodeCached(context, config, {
       query: searchQuery,
-      limit: input.limit,
+      limit: PROVIDER_RESULTS,
       restrictToBounds: false,
       ...(input.language ? { language: input.language } : {}),
-      ...(input.countryCodes ? { countryCodes: input.countryCodes } : {}),
-      ...(area ? { bounds: area } : {})
+      ...(input.countryCodes ? { countryCodes: input.countryCodes } : {})
     }, call);
     provider = output.provider;
     fetchedAt = output.fetchedAt;
@@ -253,7 +257,7 @@ export async function resolvePlace(
   const ranked = rankCandidates({ remembered: rememberedForText, provider: results, knownPlaces, searchQuery, area });
   // Two remembered places for the same words are a real ambiguity, not a memory hit.
   const rememberedText = rememberedForText.length === 1;
-  const decision = decide(ranked, rememberedText);
+  const decision = decide(ranked, rememberedText, searchQuery);
   const candidates = decision.candidates.slice(0, input.limit).map((candidate) => ({
     place: withPlaceTimezone(candidate.place),
     shortLabel: shortLabel(candidate.place),

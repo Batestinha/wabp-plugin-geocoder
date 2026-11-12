@@ -91,10 +91,23 @@ export interface RankedCandidate {
   remembered: boolean;
   nameMatch: boolean;
   inArea: boolean;
+  /** Distance to the usual area (0 inside it); undefined without an area. */
+  areaKm?: number | undefined;
+}
+
+/** A place this close to a community's usual area is in its region ("Lagos" for a Lisbon group is the Algarve one). */
+export const REGION_KM = 400;
+
+export function distanceToBoundsKm(point: GeocoderPoint, bounds: GeocoderBoundingBox): number {
+  const nearest = {
+    latitude: Math.min(bounds.north, Math.max(bounds.south, point.latitude)),
+    longitude: Math.min(bounds.east, Math.max(bounds.west, point.longitude))
+  };
+  return distanceKm(point, nearest);
 }
 
 /** Two results with the same name this close are one place (a town and its parish, a node and its area). */
-const SAME_NAME_DUPLICATE_KM = 5;
+const SAME_NAME_DUPLICATE_KM = 10;
 
 /**
  * Remembered places first, then places named exactly what was searched, then places in the usual area;
@@ -112,36 +125,56 @@ export function rankCandidates(input: {
     order,
     remembered: order < input.remembered.length || input.knownPlaces.some((known) => samePlace(known, place)),
     nameMatch: isNameMatch(place, input.searchQuery),
-    inArea: insideBounds(place.point, input.area)
+    inArea: insideBounds(place.point, input.area),
+    ...(input.area ? { areaKm: distanceToBoundsKm(place.point, input.area) } : {})
   }));
+  // Being in the usual area counts as much as the exact name: "Tapada da Ajuda" near Lisbon before a
+  // hamlet called "Tapada" 150 km away; remembered places always first.
   const score = (candidate: RankedCandidate & { order: number }) =>
-    (candidate.remembered ? 4 : 0) + (candidate.nameMatch ? 2 : 0) + (candidate.inArea ? 1 : 0);
-  const sorted = candidates.sort((left, right) => score(right) - score(left) || left.order - right.order);
+    (candidate.remembered ? 8 : 0) + (candidate.nameMatch ? 2 : 0) + (candidate.inArea ? 2 : 0);
+  // With a usual area, nearer places come first among equals; otherwise the provider's order stands.
+  const sorted = candidates.sort((left, right) => score(right) - score(left)
+    || (left.areaKm !== undefined && right.areaKm !== undefined ? left.areaKm - right.areaKm : 0)
+    || left.order - right.order);
   const kept: RankedCandidate[] = [];
   for (const candidate of sorted) {
     const duplicate = kept.some((other) => samePlace(other.place, candidate.place)
       || (normalizedPlaceText(placeName(other.place)) === normalizedPlaceText(placeName(candidate.place))
         && distanceKm(other.place.point, candidate.place.point) <= SAME_NAME_DUPLICATE_KM));
-    if (!duplicate) kept.push({ place: candidate.place, remembered: candidate.remembered, nameMatch: candidate.nameMatch, inArea: candidate.inArea });
+    if (!duplicate) {
+      kept.push({ place: candidate.place, remembered: candidate.remembered, nameMatch: candidate.nameMatch,
+        inArea: candidate.inArea, ...(candidate.areaKm !== undefined ? { areaKm: candidate.areaKm } : {}) });
+    }
   }
   return kept;
 }
 
 /**
- * Confident when the text was remembered, there is one candidate, or exactly one candidate has that name
- * (or exactly one with that name lies in the usual area). The confident candidate goes first.
+ * Confident when the text was remembered, there is one candidate, or exactly one candidate has that name,
+ * or exactly one with that name lies in the usual area, or (failing that) in its region. The confident
+ * candidate goes first.
  */
-export function decide(candidates: RankedCandidate[], rememberedText: boolean): {
+export function decide(candidates: RankedCandidate[], rememberedText: boolean, searchQuery = ''): {
   status: GeocoderResolveStatus;
   candidates: RankedCandidate[];
 } {
   if (candidates.length === 0) return { status: 'not_found', candidates };
   if (rememberedText || candidates.length === 1) return { status: 'resolved', candidates };
   const named = candidates.filter((candidate) => candidate.nameMatch);
-  const pick = named.length === 1 ? named[0]
-    : named.length > 1 && named.filter((candidate) => candidate.inArea).length === 1
-      ? named.find((candidate) => candidate.inArea)
-      : undefined;
+  const only = (matches: RankedCandidate[]) => matches.length === 1 ? matches[0] : undefined;
+  const inRegion = (candidate: RankedCandidate) => candidate.areaKm !== undefined && candidate.areaKm <= REGION_KM;
+  let pick = named.length === 1 ? named[0] : undefined;
+  if (named.length > 1) {
+    pick = only(named.filter((candidate) => candidate.inArea))
+      ?? (named.some((candidate) => candidate.inArea) ? undefined : only(named.filter(inRegion)));
+    // A longer name nearby ("Tapada da Ajuda" beside the area's only "Tapada") keeps it a question.
+    const wanted = normalizedPlaceText(searchQuery);
+    const near = (candidate: RankedCandidate) => pick?.inArea ? candidate.inArea : inRegion(candidate);
+    if (pick && wanted && candidates.some((candidate) => candidate !== pick && near(candidate)
+      && normalizedPlaceText(placeName(candidate.place)).startsWith(`${wanted} `))) {
+      pick = undefined;
+    }
+  }
   if (!pick) return { status: 'ambiguous', candidates };
   return { status: 'resolved', candidates: [pick, ...candidates.filter((candidate) => candidate !== pick)] };
 }

@@ -98,14 +98,24 @@ test('a name shared by places far apart is ambiguous until the community area or
   assert.equal(ambiguous.presentation.alternatives, 'Também encontrei: Lagos, Faro, Portugal. Indica a região ou o país para escolher outro.');
   assert.deepEqual(ambiguous.presentation.optionLines, ['1. Lagos, Lagos State, Nigeria', '2. Lagos, Faro, Portugal']);
 
-  // The community usually meets around Lisbon: its area picks the Portuguese Lagos and biases the provider.
+  // The community usually meets around Lisbon: the Algarve Lagos is in its region, Nigeria's is not.
+  // The area ranks results locally; it never goes to the provider as a viewbox (that dropped results).
   const local = harness([LAGOS_NG, LAGOS_PT]);
   await local.remember([{ query: 'Sintra', place: SINTRA }, { query: 'Cascais', place: CASCAIS }, { query: 'Sesimbra', place: SESIMBRA }], 'import');
   local.providerQueries.length = 0;
   const lagos = await local.resolve('Lagos');
-  assert.equal(lagos.status, 'ambiguous');
-  assert.ok(local.providerQueries[0].searchParams.get('viewbox'));
-  assert.equal(local.providerQueries[0].searchParams.get('bounded'), null);
+  assert.equal(lagos.status, 'resolved');
+  assert.equal(lagos.candidates[0].place.label, 'Lagos, Faro, Portugal');
+  assert.equal(lagos.presentation.alternatives, undefined);
+  assert.equal(local.providerQueries[0].searchParams.get('viewbox'), null);
+  assert.equal(local.providerQueries[0].searchParams.get('limit'), '10');
+  // Two same-named places both in the region stay a question, nearest first.
+  const two = harness([LAGOS_NG, place('Lagos, Évora, Portugal', 38.57, -7.9, { state: 'Évora', country: 'Portugal' }, { name: 'Lagos', providerRef: 'node:12' }), LAGOS_PT]);
+  await two.remember([{ query: 'Sintra', place: SINTRA }, { query: 'Cascais', place: CASCAIS }, { query: 'Sesimbra', place: SESIMBRA }], 'import');
+  const both = await two.resolve('Lagos');
+  assert.equal(both.status, 'ambiguous');
+  assert.equal(both.candidates[0].place.label, 'Lagos, Évora, Portugal');
+  assert.equal(both.candidates.at(-1).place.label, 'Lagos, Lagos State, Nigeria');
 
   const wide = harness([LAGOS_NG, LAGOS_PT, place('Lagoa, Faro, Portugal', 37.13, -8.45, { country: 'Portugal' }, { name: 'Lagoa', providerRef: 'node:9' })]);
   await wide.remember([{ query: 'Sagres', place: place('Sagres', 37.0, -8.94, { country: 'Portugal' }, { name: 'Sagres', providerRef: 'node:10' }) },
@@ -113,6 +123,18 @@ test('a name shared by places far apart is ambiguous until the community area or
   const algarve = await wide.resolve('Lagos');
   assert.equal(algarve.status, 'resolved');
   assert.equal(algarve.candidates[0].place.label, 'Lagos, Faro, Portugal');
+
+  // Around Lisbon, the Tapada da Ajuda ranks before same-named hamlets far away and keeps it a question.
+  const tapadas = harness([
+    place('Tapada, Almeirim, Santarém, Portugal', 39.2, -8.6, { country: 'Portugal' }, { name: 'Tapada', providerRef: 'node:30' }),
+    place('Tapada, Janes, Cascais, Lisboa, Portugal', 38.74, -9.43, { country: 'Portugal' }, { name: 'Tapada', providerRef: 'node:31' }),
+    place('Tapada da Ajuda, Alcântara, Lisboa, Portugal', 38.71, -9.18, { country: 'Portugal' }, { name: 'Tapada da Ajuda', providerRef: 'node:32' })
+  ]);
+  await tapadas.remember([{ query: 'Sintra', place: SINTRA }, { query: 'Cascais', place: CASCAIS }, { query: 'Sesimbra', place: SESIMBRA }], 'import');
+  const tapada = await tapadas.resolve('Tapada (maybe?)');
+  assert.equal(tapada.status, 'ambiguous');
+  assert.deepEqual(tapada.candidates.map(c => c.place.label), [
+    'Tapada, Janes, Cascais, Lisboa, Portugal', 'Tapada da Ajuda, Alcântara, Lisboa, Portugal', 'Tapada, Almeirim, Santarém, Portugal']);
 });
 
 test('a confirmed choice is remembered for those words, ranks first, and later lookups need no question', async () => {
