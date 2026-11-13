@@ -4,7 +4,7 @@
   "name": "Geocoder",
   "description": "Provider-neutral geocoding and map-link services for other plugins.",
   "kind": "managed_group",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "coreApiRange": "^0.3.0",
   "entrypoint": "dist/index.js",
   "messageNamespace": "official.geocoder",
@@ -44,7 +44,7 @@
   "services": [
     {
       "serviceId": "official.geocoder.v1",
-      "description": "Provider-neutral forward geocoding, reverse geocoding, and map links.",
+      "description": "Provider-neutral forward geocoding, reverse geocoding, map links, and place disambiguation with a per-scope memory of confirmed places.",
       "methods": [
         {
           "name": "timezoneForPoint",
@@ -63,6 +63,19 @@
         {
           "name": "mapLinks",
           "access": "read"
+        },
+        {
+          "name": "resolve",
+          "access": "read",
+          "timeoutMs": 10000
+        },
+        {
+          "name": "choose",
+          "access": "read"
+        },
+        {
+          "name": "remember",
+          "access": "mutation"
         }
       ]
     }
