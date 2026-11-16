@@ -4,10 +4,11 @@
   "sourceCommit": "89eb49117333fead0f80244e5e03e10ccfbe96c9",
   "sourceDirectory": "src/plugins/official/geocoder",
   "sdk": {
-    "path": "vendor/wabs-plugin-sdk-0.3.0-ed859a147c58.tgz",
-    "sha256": "ed859a147c58c02a7d07d56ae4b3926236d997ab3b76bee4cc19abb4447226e4",
+    "path": "vendor/wabs-plugin-sdk-0.4.0-6ba1145ff173.tgz",
+    "sha256": "6ba1145ff1730e29259a1e88813e2792afd531558b60dc4ac0a52c3a01280aed",
     "sourceDirectory": "packages/plugin-sdk",
-    "sourceCommit": "a7c07bcf732af46a90d75869a208beed771b52f4"
+    "sourceCommit": "ed10a3e663c348f90b34651bb9158c697af7b135",
+    "version": "0.4.0"
   },
   "timezoneData": {
     "package": "geo-tz",
