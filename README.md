@@ -13,3 +13,13 @@ Run `npm ci --ignore-scripts`, `npm test`, and `npm run release:archive` (Node 2
 `provenance.json` records the extraction source and the vendored SDK digest. `package-lock.json` pins every resolved dependency, including indirect dependencies. Dependency maintenance must refresh these pins through validation and rollback policy; vendoring is not a permanent hold.
 
 Code is licensed under MIT. Timezone boundaries have separate attribution and licensing described in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+## Command interaction contract
+
+This release requires WABP core API 0.4 and the matching plugin SDK. Commands
+declare invocation eligibility and the audience and length of their conversation
+through `interactionPolicy`; plugins without commands retain an empty command
+list. The host owns group-to-PM notices, the two-question allowance for brief
+clarification, and routing across assistant execution and recovered flows. Personal
+guided workflows stay private, with domain publications delivered through their
+existing authorized group publication paths.

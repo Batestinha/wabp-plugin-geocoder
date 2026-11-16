@@ -17,8 +17,8 @@ export const GEOCODER_PLUGIN_ID = 'official.geocoder';
 export const geocoderManifest: PluginManifest = {
   pluginId: GEOCODER_PLUGIN_ID,
   kind: 'managed_group',
-  version: '0.3.0',
-  coreApiRange: '^0.3.0',
+  version: '0.4.0',
+  coreApiRange: '^0.4.0',
   messageNamespace: 'official.geocoder',
   descriptionKey: 'official.geocoder.description',
   defaultMessages: geocoderMessages,
