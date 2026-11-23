@@ -1,7 +1,7 @@
 {
-  "official.geocoder.description": "Serviços de geocodificação e ligações de mapas, independentes do fornecedor, para outros plugins.",
+  "official.geocoder.description": "Converte nomes de lugares e moradas em coordenadas e identifica lugares e fusos horários a partir de coordenadas. Outros plugins podem usar as suas ligações para mapas e reutilizar lugares já confirmados no mesmo âmbito.",
   "official.geocoder.help.feature.title": "Pesquisa de locais",
-  "official.geocoder.help.feature.summary": "Resolve nomes de lugares, moradas, coordenadas e ligações de mapa para funcionalidades ativas.",
+  "official.geocoder.help.feature.summary": "Ajuda outros plugins a identificar lugares, esclarecer nomes ambíguos e obter ligações para mapas e fusos horários.",
   "official.geocoder.help.lookup.title": "Serviço de geocodificação",
   "official.geocoder.help.lookup.summary": "Decide que local as pessoas querem dizer para eventos, meteorologia e outros plugins, e lembra os locais que cada comunidade usa.",
   "official.geocoder.help.lookup.instruction": "Este é um serviço de apoio sem comando direto na conversa; usa os tópicos de ajuda de eventos ou meteorologia que o consomem.",
