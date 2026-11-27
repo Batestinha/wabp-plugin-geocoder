@@ -22,7 +22,7 @@ export const geocoderManifest: PluginManifest = {
   kind: 'managed_group',
   ...relationships,
   version: '0.3.3',
-  coreApiRange: '^0.3.0',
+  coreApiRange: '^0.3.31',
   messageNamespace: 'official.geocoder',
   descriptionKey: 'official.geocoder.description',
   defaultMessages: geocoderMessages,

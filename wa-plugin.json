@@ -9,7 +9,7 @@
   "description": "Resolves place names and addresses to coordinates and looks up places and time zones from coordinates. Other plugins can use its map links and reuse places previously confirmed in the same scope.",
   "kind": "managed_group",
   "version": "0.3.3",
-  "coreApiRange": "^0.3.0",
+  "coreApiRange": "^0.3.31",
   "entrypoint": "dist/index.js",
   "messageNamespace": "official.geocoder",
   "descriptionKey": "official.geocoder.description",
