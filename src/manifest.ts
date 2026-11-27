@@ -14,11 +14,15 @@ import {
 
 export const GEOCODER_PLUGIN_ID = 'official.geocoder';
 
+const { dependencies, integrations } = require('../wa-plugin.json');
+const relationships = { dependencies, integrations };
+
 export const geocoderManifest: PluginManifest = {
   pluginId: GEOCODER_PLUGIN_ID,
   kind: 'managed_group',
-  version: '0.3.2',
-  coreApiRange: '^0.3.0',
+  ...relationships,
+  version: '0.3.3',
+  coreApiRange: '^0.3.31',
   messageNamespace: 'official.geocoder',
   descriptionKey: 'official.geocoder.description',
   defaultMessages: geocoderMessages,

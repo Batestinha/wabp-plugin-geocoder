@@ -8,8 +8,8 @@
   },
   "description": "Resolves place names and addresses to coordinates and looks up places and time zones from coordinates. Other plugins can use its map links and reuse places previously confirmed in the same scope.",
   "kind": "managed_group",
-  "version": "0.3.2",
-  "coreApiRange": "^0.3.0",
+  "version": "0.3.3",
+  "coreApiRange": "^0.3.31",
   "entrypoint": "dist/index.js",
   "messageNamespace": "official.geocoder",
   "descriptionKey": "official.geocoder.description",
@@ -92,6 +92,18 @@
     "workflows": []
   },
   "dependencies": [],
+  "integrations": [
+    {
+      "pluginId": "official.community-events",
+      "versionRange": "*",
+      "description": "Resolves event locations and their time zones."
+    },
+    {
+      "pluginId": "official.weather",
+      "versionRange": "*",
+      "description": "Resolves named locations for forecasts."
+    }
+  ],
   "operatorConsole": {
     "configPaths": [
       "provider",

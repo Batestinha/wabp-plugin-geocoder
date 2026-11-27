@@ -1,6 +1,6 @@
 {
   "name": "@wabs/plugin-geocoder",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Resolves place names and addresses to coordinates and looks up places and time zones from coordinates. Other plugins can use its map links and reuse places previously confirmed in the same scope.",
   "license": "MIT",
   "private": true,
